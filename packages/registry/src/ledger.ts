@@ -1,5 +1,6 @@
 import type { CollectedDemonstration } from "./collected.js";
 import type { FeedRecord } from "./feeds.js";
+import type { AdmissionShadow } from "./shadow.js";
 
 export interface RuntimeDelta {
   demonstrations: { id: string; review: "pending" | "confirmed"; operator?: "admit" | "quarantine" | "reject"; actor?: string; at?: string }[];
@@ -13,6 +14,7 @@ export interface LedgerSnapshot {
   runtime: RuntimeDelta;
   feeds: FeedRecord[];
   collected: CollectedDemonstration[];
+  shadow?: AdmissionShadow[];
 }
 
 export interface Ledger {

@@ -11,7 +11,7 @@ The lab-uk corpus is twelve authored demonstrations, five embodiments, four verd
 
 `pade-admission` is the only specialist with a closed input contract and a reproducible label. The label is `admission-0.1.0` itself. Training a model to predict that label on these twelve records would copy a function that already runs exactly. The Rust kernel remains the authority.
 
-The label worth learning later is an operator divergence: a person admitted, quarantined, or rejected against the kernel, on a record that was collected rather than authored. That log can be stored. It is empty. A shadow model may be trained against those divergences when the log exists. It must not replace `policy.evaluate`.
+The label worth learning later is an operator divergence: a person admitted, quarantined, or rejected against the kernel, on a record that was collected rather than authored. That log is `GET /api/v1/training/admission`. A confirmation is not stored. A fixture override is not stored. The response keeps `trained: false` and `weight: null`. A shadow model may be trained against those divergences when the log is large enough to hold out. It must not replace `policy.evaluate`.
 
 ## Embodiment — no
 
@@ -38,7 +38,7 @@ The label worth learning later is an operator divergence: a person admitted, qua
 1. Collected demonstrations, stored under `DATABASE_URL`, whose admission inputs were measured rather than authored.
 2. Operator decisions on those records, signed, and kept when they diverge from `admission-0.1.0`.
 3. A held-out split of those divergences. The fixture corpus is not that split.
-4. A weight file for `pade-admission` only, evaluated as a shadow. The route keeps `untrained-harness` until that file exists and the evaluation is reported against the held-out split.
+4. A weight file for `pade-admission` only, evaluated as a shadow against a held-out part of that log. The route keeps `untrained-harness`, and `GET /api/v1/training/admission` keeps `trained: false`, until that file exists and the evaluation is reported.
 5. The kernel still decides. The shadow model does not.
 
 No other harness starts before its own measured label exists. OpenRouter is not a substitute for that weight file.

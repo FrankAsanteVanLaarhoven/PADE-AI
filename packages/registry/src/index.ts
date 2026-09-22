@@ -2,6 +2,8 @@ export { admitSample } from "./collected.js";
 export type { CollectedDemonstration } from "./collected.js";
 export { FeedStore, MODEL_CLASSES } from "./feeds.js";
 export type { FeedRecord, FeedSample, ModelClass } from "./feeds.js";
+export { shadowStatus } from "./shadow.js";
+export type { AdmissionShadow } from "./shadow.js";
 export { MemoryLedger } from "./ledger.js";
 export type { Ledger, LedgerSnapshot, RuntimeDelta } from "./ledger.js";
 export { MemoryRegistry, RegistryError } from "./store.js";

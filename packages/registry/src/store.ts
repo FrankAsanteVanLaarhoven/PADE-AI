@@ -40,6 +40,7 @@ import {
 } from "./corpus.js";
 import type { CollectedDemonstration } from "./collected.js";
 import type { RuntimeDelta } from "./ledger.js";
+import type { AdmissionShadow } from "./shadow.js";
 import type { Field, LinkRef, ListRow, ListView, Overview, Panel, Tone, Workspace } from "./views.js";
 
 export class RegistryError extends Error {
@@ -147,6 +148,7 @@ export class MemoryRegistry {
   private audit: AuditEvent[];
   private auditSeq = 0;
   private collected: CollectedDemonstration[] = [];
+  private shadow: AdmissionShadow[] = [];
   private signer: ((event: AuditEvent) => string) | null = null;
   private presentation = {
     persistence: "Process memory. Operator actions reset when the API process restarts.",
@@ -817,6 +819,14 @@ export class MemoryRegistry {
     return this.collected.map((row) => ({ ...row }));
   }
 
+  admissionShadow(): AdmissionShadow[] {
+    return this.shadow.map((row) => ({ ...row }));
+  }
+
+  replaceShadow(rows: AdmissionShadow[]) {
+    this.shadow = rows.map((row) => ({ ...row, input: { ...row.input }, kernel: { ...row.kernel } }));
+  }
+
   exportRuntime(): RuntimeDelta {
     return {
       demonstrations: [...this.demoState.entries()].map(([id, runtime]) => ({ id, ...runtime })),
@@ -859,6 +869,20 @@ export class MemoryRegistry {
       ? `Operator ${action} diverges from policy ${row.policy.admission}. Dataset membership was not changed.`
       : `Operator ${action} confirms policy ${row.policy.admission}. Dataset membership was not changed.`;
     this.pushAudit(actor, text, "demonstration", row.id);
+    if (diverged && row.input && row.policy && row.source.startsWith("feed:")) {
+      const signed = this.audit.at(-1);
+      this.shadow.push({
+        id: `sh-${row.id}`,
+        demonstrationId: row.id,
+        source: row.source,
+        input: row.input,
+        kernel: row.policy,
+        operator: action,
+        actor,
+        at: row.at ?? signed?.at ?? new Date().toISOString(),
+        signature: signed?.signature,
+      });
+    }
     return this.object(env, "demonstration", row.id);
   }
 

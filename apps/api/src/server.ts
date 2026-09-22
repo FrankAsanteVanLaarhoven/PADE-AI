@@ -1,5 +1,5 @@
 import { serve } from "@hono/node-server";
-import { admitSample, FeedStore, type Ledger, MemoryLedger, MemoryRegistry, MODEL_CLASSES, RegistryError } from "@pade/registry";
+import { admitSample, FeedStore, type Ledger, MemoryLedger, MemoryRegistry, MODEL_CLASSES, RegistryError, shadowStatus } from "@pade/registry";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { ZodError, z } from "zod";
@@ -136,6 +136,11 @@ function guard(authorization: string | undefined) {
 
 app.get("/api/v1/feeds", (c) => c.json({ feeds: feeds.list() }));
 
+app.get("/api/v1/training/admission", (c) => {
+  const records = registry.admissionShadow();
+  return c.json({ ...shadowStatus(records.length), records });
+});
+
 app.post("/api/v1/feeds", async (c) => {
   try {
     guard(c.req.header("authorization"));
@@ -215,6 +220,7 @@ async function persist() {
     runtime: registry.exportRuntime(),
     feeds: feeds.list(),
     collected: registry.collectedRecords(),
+    shadow: registry.admissionShadow(),
   });
 }
 
@@ -230,6 +236,7 @@ async function boot() {
   if (snapshot) {
     registry.restoreRuntime(snapshot.runtime);
     registry.replaceCollected(snapshot.collected);
+    registry.replaceShadow(snapshot.shadow ?? []);
     feeds.restore(snapshot.feeds);
   }
   setInterval(() => {
