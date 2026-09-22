@@ -28,7 +28,7 @@ export function VoiceDock() {
   const [listening, setListening] = useState(false);
   const [draft, setDraft] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
-  const [engine, setEngine] = useState<"device" | "grok">("device");
+  const [engine, setEngine] = useState<"device" | "remote">("device");
   const [note, setNote] = useState<string | null>(null);
   const recRef = useRef<Rec | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -37,7 +37,7 @@ export function VoiceDock() {
     fetch("/api/v1/voice")
       .then((response) => response.json())
       .then((body: { engine?: string }) => {
-        if (body.engine === "grok") setEngine("grok");
+        if (body.engine === "remote") setEngine("remote");
       })
       .catch(() => setEngine("device"));
   }, []);
@@ -45,7 +45,7 @@ export function VoiceDock() {
   async function speak(text: string) {
     window.speechSynthesis?.cancel();
     audioRef.current?.pause();
-    if (engine === "grok") {
+    if (engine === "remote") {
       const response = await fetch("/api/v1/voice/speak", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -176,7 +176,6 @@ export function VoiceDock() {
     <div className="voice-dock">
       {open ? (
         <section className="voice-panel" aria-label={t("voice")}>
-          <p className="kicker">{engine === "grok" ? t("voiceGrok") : t("voiceDevice")}</p>
           <ol>
             {turns.map((turn, index) => (
               <li key={index}>

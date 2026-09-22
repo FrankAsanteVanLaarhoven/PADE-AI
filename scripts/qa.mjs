@@ -62,6 +62,7 @@ const routes = [
   ["/sentinel", "sentinel"],
   ["/failures", "failures"],
   ["/acquisition", "acquisition"],
+  ["/collection", "collection"],
   ["/deployments", "deployments"],
   ["/evidence", "evidence"],
   ["/standards", "standards"],
@@ -123,13 +124,14 @@ try {
   await page.waitForURL("http://127.0.0.1:4173/");
 
   await page.locator("select[aria-label='Environment']").selectOption("field-sim");
-  await page.getByText("not copied").waitFor();
+  await page.getByText("unavailable").first().waitFor();
   const fieldText = await page.locator("body").innerText();
   check(!fieldText.includes("DAR-008928"), "field-sim copied a lab demonstration");
+  check(!fieldText.includes("not copied"), "field-sim still prints the copy instruction");
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator("select[aria-label='Environment']").selectOption("lab-uk");
-  await page.getByText("lab-uk is the fixture corpus").waitFor();
+  await page.getByText("fixture:pade-v0.1").first().waitFor();
   await page.screenshot({ path: `${shots}/overview-mobile.png`, fullPage: true });
   await page.getByRole("button", { name: "Sections" }).click();
   await page.getByRole("link", { name: /Demonstrations/ }).click();

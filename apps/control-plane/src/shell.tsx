@@ -18,6 +18,7 @@ import {
   SimulationPage,
   VerdictsPage,
 } from "./pages";
+import { FeedsPage } from "./feeds";
 import { StandardsPage } from "./standards";
 import type { Meta } from "./types";
 import { LOCALES, useI18n } from "./i18n/context";
@@ -150,10 +151,16 @@ export function App() {
         </a>
         <nav className={rail ? "rail open" : "rail"} aria-label="Sections">
           <div className="brand">
-            <strong>PADE</strong>
+            <strong className="hide-collapsed">PADE</strong>
+            <strong className="show-collapsed">P</strong>
             <span className="hide-collapsed">{t("brandSub")}</span>
-            <button type="button" className="btn rail-toggle" onClick={() => setCollapsed((value) => !value)}>
-              {collapsed ? t("expand") : t("collapse")}
+            <button
+              type="button"
+              className="btn rail-toggle"
+              aria-label={collapsed ? t("expand") : t("collapse")}
+              onClick={() => setCollapsed((value) => !value)}
+            >
+              <i />
             </button>
           </div>
           {NAV.map((group) => (
@@ -168,18 +175,9 @@ export function App() {
             </div>
           ))}
           <div className="rail-foot hide-collapsed">
-            <div>
-              <span>{t("environment")}</span>
-              <b>{env}</b>
-            </div>
-            <div>
-              <span>{t("sessionLabel")}</span>
-              <b>{t("unsigned")}</b>
-            </div>
-            <div>
-              <span>{t("corpusLabel")}</span>
-              <b>{meta?.mode ?? "…"}</b>
-            </div>
+            <b>{env}</b>
+            <b>{meta?.release ?? "—"}</b>
+            <b>{meta?.mode ?? "…"}</b>
           </div>
         </nav>
         <div className="main">
@@ -194,7 +192,6 @@ export function App() {
             <ThemeLanguage />
             <Clock />
             <label className="scope">
-              {t("environment")}
               <select aria-label={t("environment")} value={env} onChange={(event) => setEnv(event.target.value)}>
                 {(meta?.environments ?? [
                   { id: "lab-uk", label: "lab-uk", detail: "fixture corpus" },
@@ -207,7 +204,6 @@ export function App() {
               </select>
             </label>
             <label className="scope">
-              <span className="rel-label">{t("release")}</span>
               <select aria-label={t("release")} value={meta?.release ?? ""} disabled>
                 <option value={meta?.release ?? ""}>{meta?.release ?? t("releaseNone")}</option>
               </select>
@@ -218,6 +214,7 @@ export function App() {
           <div id="content">
             <Routes>
               <Route path="/" element={<OverviewPage />} />
+              <Route path="/collection" element={<FeedsPage />} />
               <Route path="/registry" element={<RegistryPage />} />
               <Route path="/demonstrations" element={<DemonstrationsPage />} />
               <Route path="/embodiments" element={<EmbodimentsPage />} />
@@ -263,7 +260,6 @@ function ThemeLanguage() {
   return (
     <>
       <label className="scope">
-        {t("theme")}
         <select aria-label={t("theme")} value={theme} onChange={(event) => setTheme(event.target.value as "light" | "dark" | "system")}>
           <option value="light">{t("themeLight")}</option>
           <option value="dark">{t("themeDark")}</option>
@@ -271,7 +267,6 @@ function ThemeLanguage() {
         </select>
       </label>
       <label className="scope">
-        {t("language")}
         <select aria-label={t("language")} value={locale} onChange={(event) => setLocale(event.target.value as typeof locale)}>
           {LOCALES.map((item) => (
             <option key={item.id} value={item.id}>

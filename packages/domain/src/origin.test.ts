@@ -7,6 +7,12 @@ describe("assertOrigin", () => {
     expect(() => assertOrigin("fixture", "robot:g1-lab-01")).toThrow(/live source/);
   });
 
+  it("accepts an attached collection feed only as live", () => {
+    expect(() => assertOrigin("live", "feed:fd-arm-1")).not.toThrow();
+    expect(() => assertOrigin("fixture", "feed:fd-arm-1")).toThrow(/live source/);
+    expect(() => assertOrigin("unavailable", "adapter:feed:fd-arm-1")).not.toThrow();
+  });
+
   it("refuses to call a fixture source live", () => {
     expect(() => assertOrigin("live", "fixture:pade-v0.1")).toThrow(/live origin requires/);
     expect(() => assertOrigin("fixture", "fixture:pade-v0.1")).not.toThrow();

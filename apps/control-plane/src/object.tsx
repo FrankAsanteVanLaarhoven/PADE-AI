@@ -97,7 +97,6 @@ export function ObjectPage() {
           <p className="kicker">{data.kind}</p>
           <h1>{data.title}</h1>
           <p className="lede"><Tx text={data.subtitle} /></p>
-          <p className="banner">{data.originNote}</p>
           <SourceLine origin={data.origin} source={data.source} />
           <dl className="summary">
             {data.summary.map((item) => (

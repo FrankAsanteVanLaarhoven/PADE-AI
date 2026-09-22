@@ -5,6 +5,7 @@ export const NAV: { group: MessageKey; items: { href: string; label: MessageKey;
     group: "gOperate",
     items: [
       { href: "/", label: "navOverview", key: "o" },
+      { href: "/collection", label: "navFeeds", key: "c" },
       { href: "/deployments", label: "navDeployments", key: "p" },
     ],
   },

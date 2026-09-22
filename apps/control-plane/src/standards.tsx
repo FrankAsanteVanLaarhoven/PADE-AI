@@ -1,37 +1,36 @@
+import { useEnv } from "./shell";
 import { useI18n } from "./i18n/context";
-import { useTitle } from "./ui";
-
-const SWATCHES = [
-  ["Paper", "var(--paper)"],
-  ["Canvas", "var(--bg)"],
-  ["Rail", "var(--rail)"],
-  ["Ink", "var(--ink)"],
-  ["Line", "var(--line)"],
-  ["Graphite", "var(--graphite)"],
-];
+import { SourceLine, useTitle } from "./ui";
 
 export function StandardsPage() {
   const { t } = useI18n();
+  const { meta } = useEnv();
   useTitle(t("navStandards"));
+  const source = meta?.source ?? "adapter:environment";
+  const origin = source.startsWith("fixture:") ? "fixture" : source.startsWith("adapter:") ? "unavailable" : "fixture";
+  const rows = meta
+    ? [
+        [meta.policyVersion, meta.mdvVersion],
+        [meta.release ?? "—", meta.mode],
+        [source, meta.environment],
+      ]
+    : [];
   return (
-    <div className="page standards">
+    <div className="page">
       <h1>{t("navStandards")}</h1>
-      <p className="lede">{t("standardsLede")}</p>
-      <h2>{t("theme")}</h2>
-      <p>{t("standardsType")}</p>
-      <div className="swatches">
-        {SWATCHES.map(([name, color]) => (
-          <div key={name} className="swatch">
-            <i style={{ background: color }} />
-            <span>{name}</span>
-          </div>
-        ))}
+      <SourceLine origin={origin} source={source} />
+      <div className="table-wrap boxed">
+        <table className="data">
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.join("-")}>
+                <td className="mono">{row[0]}</td>
+                <td className="mono">{row[1]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <h2>{t("language")}</h2>
-      <p>{t("standardsOrigin")}</p>
-      <h2>{t("navOverview")}</h2>
-      <p>{t("standardsObjects")}</p>
-      <p>{t("standardsAvoid")}</p>
     </div>
   );
 }

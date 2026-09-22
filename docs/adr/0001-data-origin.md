@@ -8,7 +8,7 @@ Accepted. PADE v0.1.
 
 Every record the control plane can show carries one of four origins:
 
-- `live` — an attached robot or runtime. Source id must start with `robot:`, `isaac:`, `ros2:`, `fleetsafe-runtime:`, or `sentinel-stream:`.
+- `live` — an attached robot, runtime, or collection feed. Source id must start with `robot:`, `isaac:`, `ros2:`, `fleetsafe-runtime:`, `sentinel-stream:`, or `feed:`. A feed is live only after a sample arrives. Until then it is `adapter:feed:`.
 - `fixture` — the authored corpus `fixture:pade-v0.1`, or a local operator action on that corpus (`local-session`).
 - `simulated` — a result produced by a simulator (`sim:`). A plan that has not been executed is not simulated.
 - `unavailable` — an adapter that is not connected (`adapter:`). The record is a reason and a contract name, not a zero disguised as a measurement.

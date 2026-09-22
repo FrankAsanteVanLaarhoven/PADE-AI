@@ -1,10 +1,11 @@
 import { serve } from "@hono/node-server";
-import { MemoryRegistry, RegistryError } from "@pade/registry";
+import { FeedStore, MODEL_CLASSES, MemoryRegistry, RegistryError } from "@pade/registry";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { ZodError, z } from "zod";
 
 const registry = new MemoryRegistry();
+const feeds = new FeedStore();
 const app = new Hono();
 
 app.use("*", cors());
@@ -79,51 +80,85 @@ async function mutate<T extends z.ZodTypeAny>(
   }
 }
 
-app.get("/api/v1/voice", (c) => c.json({ engine: process.env.XAI_API_KEY ? "grok" : "device" }));
+const feedBody = z.object({
+  name: z.string().trim().min(1).max(80),
+  what: z.string().trim().min(1).max(160),
+  use: z.string().trim().min(1).max(160),
+  modelClass: z.enum(MODEL_CLASSES),
+  endpoint: z.string().trim().max(500).optional(),
+});
 
-const TTS_LANGUAGE: Record<string, string> = {
-  en: "en",
-  zh: "zh",
-  hi: "hi",
-  es: "es-ES",
-  fr: "fr",
-  ar: "ar-SA",
-  bn: "bn",
-  pt: "pt-PT",
-  ja: "ja",
-  de: "de",
-  ko: "ko",
-  tr: "tr",
-  vi: "vi",
-  id: "id",
-  it: "it",
-  ru: "ru",
-};
-
-app.post("/api/v1/voice/speak", async (c) => {
-  const key = process.env.XAI_API_KEY;
-  if (!key) return c.json({ engine: "device", reason: "XAI_API_KEY is not set" }, 503);
+function endpointOf(value: string | undefined): string | null {
+  if (!value) return null;
+  let url: URL;
   try {
-    const body = z.object({ text: z.string().min(1).max(4000), language: z.string().min(2).max(16) }).parse(await c.req.json());
-    const language = TTS_LANGUAGE[body.language.slice(0, 2).toLowerCase()] ?? "auto";
-    const response = await fetch("https://api.x.ai/v1/tts", {
-      method: "POST",
-      headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-      body: JSON.stringify({
-        text: body.text,
-        voice_id: "eve",
-        language,
-        output_format: { codec: "mp3", sample_rate: 24000, bit_rate: 128000 },
-      }),
-    });
-    if (!response.ok) return c.json({ error: "Grok speech failed" }, 502);
-    return new Response(await response.arrayBuffer(), { headers: { "content-type": "audio/mpeg" } });
+    url = new URL(value);
+  } catch {
+    throw new RegistryError(400, "Endpoint must be an http(s) URL.");
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new RegistryError(400, "Endpoint must be an http(s) URL.");
+  }
+  return url.toString();
+}
+
+app.get("/api/v1/feeds", (c) => c.json({ feeds: feeds.list() }));
+
+app.post("/api/v1/feeds", async (c) => {
+  try {
+    const body = feedBody.parse(await c.req.json());
+    return c.json(feeds.add({ ...body, endpoint: endpointOf(body.endpoint) }), 201);
   } catch (error) {
-    if (error instanceof ZodError) return c.json({ error: "Request did not match the contract." }, 400);
-    console.error(error);
-    return c.json({ error: "Grok speech failed" }, 502);
+    if (error instanceof ZodError) return Response.json({ error: "Request did not match the contract." }, { status: 400 });
+    if (error instanceof RegistryError) return Response.json({ error: error.message }, { status: error.status });
+    throw error;
   }
 });
+
+app.post("/api/v1/feeds/:id/samples", async (c) => {
+  try {
+    const body = z.object({ body: z.unknown(), observedAt: z.string().optional() }).parse(await c.req.json());
+    return c.json(feeds.pushSample(c.req.param("id"), body.body, body.observedAt), 201);
+  } catch (error) {
+    if (error instanceof ZodError) return Response.json({ error: "Request did not match the contract." }, { status: 400 });
+    if (error instanceof Error && error.message.startsWith("No feed")) {
+      return Response.json({ error: error.message }, { status: 404 });
+    }
+    throw error;
+  }
+});
+
+async function pullFeeds() {
+  await Promise.all(
+    feeds.endpoints().map(async ({ id, endpoint }) => {
+      try {
+        const response = await fetch(endpoint, { redirect: "error", signal: AbortSignal.timeout(4000) });
+        if (!response.ok) {
+          feeds.markUnreachable(id, String(response.status));
+          return;
+        }
+        const text = (await response.text()).slice(0, 64_000);
+        let payload: unknown = text;
+        try {
+          payload = JSON.parse(text);
+        } catch {
+          /* the feed sent text, not JSON */
+        }
+        feeds.pushSample(id, payload);
+      } catch (error) {
+        feeds.markUnreachable(id, error instanceof Error ? error.message : "unreachable");
+      }
+    }),
+  );
+}
+
+setInterval(() => {
+  void pullFeeds();
+}, 2000);
+
+app.get("/api/v1/voice", (c) => c.json({ engine: "device" }));
+
+app.post("/api/v1/voice/speak", (c) => c.json({ engine: "device", reason: "Remote speech is not configured." }, 503));
 
 const port = Number(process.env.PADE_API_PORT ?? 8787);
 serve({ fetch: app.fetch, port, hostname: "127.0.0.1" }, () => {

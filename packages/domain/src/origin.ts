@@ -8,7 +8,7 @@ export type Origin = z.infer<typeof originSchema>;
  * Live sources are attached robot or runtime systems.
  * Fixture, sim, and unavailable records must not use these ids.
  */
-const LIVE_SOURCE = /^(isaac|ros2|fleetsafe-runtime|sentinel-stream|robot):/;
+const LIVE_SOURCE = /^(isaac|ros2|fleetsafe-runtime|sentinel-stream|robot|feed):/;
 
 export function assertOrigin(origin: Origin, source: string): void {
   const liveId = LIVE_SOURCE.test(source);

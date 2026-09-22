@@ -7,11 +7,11 @@ function fill(patch: Partial<Messages>): Messages {
 
 export const sv: Messages = fill({
   brandSub: "Styrplan för försäkran", gOperate: "Driva", gEvidence: "Bevis", gLearn: "Lära", gAssure: "Säkra", gLoop: "Sluta kretsen", gSystem: "System",
-  navOverview: "Översikt", navDeployments: "Driftsättningar", navRegistry: "Dataregister", navDemonstrations: "Demonstrationer", navEmbodiments: "Kroppar", navEvidence: "Bevis", navDatasets: "Datamängdsfabrik", navExperiments: "Försök", navSimulation: "Simulering", navFailures: "Felatlas", navAcquisition: "Aktiv insamling", navStandards: "Normer", pageOperations: "Drift",
+  navOverview: "Översikt", navDeployments: "Driftsättningar", navRegistry: "Dataregister", navDemonstrations: "Demonstrationer", navEmbodiments: "Kroppar", navEvidence: "Bevis", navDatasets: "Datamängdsfabrik", navExperiments: "Försök", navSimulation: "Simulering", navFailures: "Felatlas", navAcquisition: "Aktiv insamling", navFeeds: "Insamling", navStandards: "Normer", pageOperations: "Drift",
   search: "Sök poster", environment: "Miljö", release: "Utgåva", releaseNone: "ingen registrerad", skip: "Till innehållet", sections: "Avsnitt", collapse: "Fäll in", expand: "Fäll ut",
   loading: "Läser in registret…", updating: "Uppdaterar posten…", apiDown: "Styrplanens API är inte nåbart.", notFoundTitle: "Inte i styrplanen", notFoundLede: "Den sökvägen är inte ett PADE-avsnitt.", noObject: "Inget objekt", openWorkspace: "Öppna arbetsyta", selectRecord: "Välj en post.", noRecords: "Inga poster.",
   theme: "Tema", themeLight: "Ljust", themeDark: "Mörkt", themeSystem: "System", language: "Språk", clock: "Världsklocka", voice: "Röst", listen: "Lyssna", stop: "Stopp", speaking: "Talar", typeInstead: "Tala eller skriv",
-  voiceDevice: "Enhetens röst. Grok-röst är inte konfigurerad på den här maskinen.", voiceGrok: "Grok-röst", voiceDenied: "Mikrofon nekad. Skriv.", voiceUnsupported: "Den här webbläsaren saknar taligenkänning. Skriv.",
+  voiceDevice: "Enhetens röst. PADE-röst är inte konfigurerad på den här maskinen.", voicePADE: "PADE-röst", voiceDenied: "Mikrofon nekad. Skriv.", voiceUnsupported: "Den här webbläsaren saknar taligenkänning. Skriv.",
   helpTitle: "Tangentbord", helpSearch: "sök", helpGo: "sedan avsnittstangenten i listen", helpList: "flytta i en lista. Enter öppnar arbetsytan", helpThis: "den här listan. Esc stänger", close: "Stäng",
   tabOverview: "översikt", tabEvidence: "bevis", tabLineage: "härkomst", tabRuns: "körningar", tabSafety: "säkerhet", tabDecisions: "beslut", tabActivity: "aktivitet",
   ledeOperations: "Styrplan för fysisk AI. Driftsättning, antagning, domar och ny insamling av fel på samma objekt.",
@@ -42,11 +42,11 @@ export const sv: Messages = fill({
 
 export const el: Messages = fill({
   brandSub: "Επίπεδο ελέγχου διασφάλισης", gOperate: "Λειτουργία", gEvidence: "Τεκμήριο", gLearn: "Μάθηση", gAssure: "Διασφάλιση", gLoop: "Κλείσιμο βρόχου", gSystem: "Σύστημα",
-  navOverview: "Επισκόπηση", navDeployments: "Αναπτύξεις", navRegistry: "Μητρώο δεδομένων", navDemonstrations: "Επιδείξεις", navEmbodiments: "Σώματα", navEvidence: "Τεκμήριο", navDatasets: "Εργοστάσιο δεδομένων", navExperiments: "Πειράματα", navSimulation: "Προσομοίωση", navFailures: "Άτλαντας αστοχιών", navAcquisition: "Ενεργή συλλογή", navStandards: "Κανόνες", pageOperations: "Λειτουργίες",
+  navOverview: "Επισκόπηση", navDeployments: "Αναπτύξεις", navRegistry: "Μητρώο δεδομένων", navDemonstrations: "Επιδείξεις", navEmbodiments: "Σώματα", navEvidence: "Τεκμήριο", navDatasets: "Εργοστάσιο δεδομένων", navExperiments: "Πειράματα", navSimulation: "Προσομοίωση", navFailures: "Άτλαντας αστοχιών", navAcquisition: "Ενεργή συλλογή", navFeeds: "Συλλογή", navStandards: "Κανόνες", pageOperations: "Λειτουργίες",
   search: "Αναζήτηση εγγραφών", environment: "Περιβάλλον", release: "Έκδοση", releaseNone: "καμία καταχωρισμένη", skip: "Μετάβαση στο περιεχόμενο", sections: "Ενότητες", collapse: "Σύμπτυξη", expand: "Ανάπτυξη",
   loading: "Φόρτωση μητρώου…", updating: "Ενημέρωση εγγραφής…", apiDown: "Το API του επιπέδου ελέγχου δεν είναι διαθέσιμο.", notFoundTitle: "Δεν είναι στο επίπεδο ελέγχου", notFoundLede: "Αυτή η διαδρομή δεν είναι ενότητα PADE.", noObject: "Κανένα αντικείμενο", openWorkspace: "Άνοιγμα χώρου", selectRecord: "Επιλέξτε εγγραφή.", noRecords: "Καμία εγγραφή.",
   theme: "Θέμα", themeLight: "Φωτεινό", themeDark: "Σκοτεινό", themeSystem: "Σύστημα", language: "Γλώσσα", clock: "Παγκόσμιο ρολόι", voice: "Φωνή", listen: "Άκου", stop: "Στοπ", speaking: "Μιλά", typeInstead: "Μίλα ή γράψε",
-  voiceDevice: "Φωνή συσκευής. Η φωνή Grok δεν έχει ρυθμιστεί σε αυτό το μηχάνημα.", voiceGrok: "Φωνή Grok", voiceDenied: "Το μικρόφωνο απορρίφθηκε. Γράψτε.", voiceUnsupported: "Αυτός ο φυλλομετρητής δεν έχει αναγνώριση ομιλίας. Γράψτε.",
+  voiceDevice: "Φωνή συσκευής. Η φωνή PADE δεν έχει ρυθμιστεί σε αυτό το μηχάνημα.", voicePADE: "Φωνή PADE", voiceDenied: "Το μικρόφωνο απορρίφθηκε. Γράψτε.", voiceUnsupported: "Αυτός ο φυλλομετρητής δεν έχει αναγνώριση ομιλίας. Γράψτε.",
   helpTitle: "Πληκτρολόγιο", helpSearch: "αναζήτηση", helpGo: "έπειτα το πλήκτρο ενότητας στη ράβδο", helpList: "κίνηση σε λίστα. Το Enter ανοίγει τον χώρο", helpThis: "αυτή η λίστα. Το Esc την κλείνει", close: "Κλείσιμο",
   tabOverview: "επισκόπηση", tabEvidence: "τεκμήριο", tabLineage: "καταγωγή", tabRuns: "εκτελέσεις", tabSafety: "ασφάλεια", tabDecisions: "αποφάσεις", tabActivity: "δραστηριότητα",
   ledeOperations: "Επίπεδο ελέγχου φυσικής τεχνητής νοημοσύνης. Ανάπτυξη, αποδοχή, αποφάσεις και νέα συλλογή αστοχιών στα ίδια αντικείμενα.",
@@ -77,11 +77,11 @@ export const el: Messages = fill({
 
 export const uk: Messages = fill({
   brandSub: "Площина контролю забезпечення", gOperate: "Робота", gEvidence: "Доказ", gLearn: "Навчання", gAssure: "Забезпечення", gLoop: "Замкнути цикл", gSystem: "Система",
-  navOverview: "Огляд", navDeployments: "Розгортання", navRegistry: "Реєстр даних", navDemonstrations: "Демонстрації", navEmbodiments: "Тіла", navEvidence: "Доказ", navDatasets: "Фабрика наборів", navExperiments: "Досліди", navSimulation: "Моделювання", navFailures: "Атлас відмов", navAcquisition: "Активний збір", navStandards: "Норми", pageOperations: "Операції",
+  navOverview: "Огляд", navDeployments: "Розгортання", navRegistry: "Реєстр даних", navDemonstrations: "Демонстрації", navEmbodiments: "Тіла", navEvidence: "Доказ", navDatasets: "Фабрика наборів", navExperiments: "Досліди", navSimulation: "Моделювання", navFailures: "Атлас відмов", navAcquisition: "Активний збір", navFeeds: "Збір", navStandards: "Норми", pageOperations: "Операції",
   search: "Шукати записи", environment: "Середовище", release: "Випуск", releaseNone: "немає зареєстрованого", skip: "До вмісту", sections: "Розділи", collapse: "Згорнути", expand: "Розгорнути",
   loading: "Завантаження реєстру…", updating: "Оновлення запису…", apiDown: "API площини керування недоступний.", notFoundTitle: "Немає в площині керування", notFoundLede: "Цей шлях не є розділом PADE.", noObject: "Немає об’єкта", openWorkspace: "Відкрити робочий простір", selectRecord: "Оберіть запис.", noRecords: "Немає записів.",
   theme: "Тема", themeLight: "Світла", themeDark: "Темна", themeSystem: "Система", language: "Мова", clock: "Світовий годинник", voice: "Голос", listen: "Слухати", stop: "Стоп", speaking: "Говорить", typeInstead: "Говоріть або введіть",
-  voiceDevice: "Голос пристрою. Голос Grok на цій машині не налаштовано.", voiceGrok: "Голос Grok", voiceDenied: "Мікрофон заборонено. Введіть текст.", voiceUnsupported: "У цьому браузері немає розпізнавання мовлення. Введіть текст.",
+  voiceDevice: "Голос пристрою. Голос PADE на цій машині не налаштовано.", voicePADE: "Голос PADE", voiceDenied: "Мікрофон заборонено. Введіть текст.", voiceUnsupported: "У цьому браузері немає розпізнавання мовлення. Введіть текст.",
   helpTitle: "Клавіатура", helpSearch: "пошук", helpGo: "потім клавіша розділу на панелі", helpList: "рух у списку. Enter відкриває простір", helpThis: "цей список. Esc закриває", close: "Закрити",
   tabOverview: "огляд", tabEvidence: "доказ", tabLineage: "походження", tabRuns: "прогони", tabSafety: "безпека", tabDecisions: "рішення", tabActivity: "активність",
   ledeOperations: "Площина керування фізичним ШІ. Розгортання, допуск, вердикти й повторний збір відмов на тих самих об’єктах.",
@@ -112,11 +112,11 @@ export const uk: Messages = fill({
 
 export const vi: Messages = fill({
   brandSub: "Mặt phẳng điều khiển bảo đảm", gOperate: "Vận hành", gEvidence: "Bằng chứng", gLearn: "Học", gAssure: "Bảo đảm", gLoop: "Khép vòng", gSystem: "Hệ thống",
-  navOverview: "Tổng quan", navDeployments: "Triển khai", navRegistry: "Sổ dữ liệu", navDemonstrations: "Minh họa", navEmbodiments: "Thân", navEvidence: "Bằng chứng", navDatasets: "Xưởng dữ liệu", navExperiments: "Thí nghiệm", navSimulation: "Mô phỏng", navFailures: "Bản đồ lỗi", navAcquisition: "Thu thập chủ động", navStandards: "Chuẩn", pageOperations: "Vận hành",
+  navOverview: "Tổng quan", navDeployments: "Triển khai", navRegistry: "Sổ dữ liệu", navDemonstrations: "Minh họa", navEmbodiments: "Thân", navEvidence: "Bằng chứng", navDatasets: "Xưởng dữ liệu", navExperiments: "Thí nghiệm", navSimulation: "Mô phỏng", navFailures: "Bản đồ lỗi", navAcquisition: "Thu thập chủ động", navFeeds: "Thu thập", navStandards: "Chuẩn", pageOperations: "Vận hành",
   search: "Tìm bản ghi", environment: "Môi trường", release: "Bản phát hành", releaseNone: "chưa đăng ký", skip: "Tới nội dung", sections: "Mục", collapse: "Thu thanh", expand: "Mở thanh",
   loading: "Đang tải sổ…", updating: "Đang cập nhật bản ghi…", apiDown: "API mặt phẳng điều khiển không dùng được.", notFoundTitle: "Không nằm trong mặt phẳng", notFoundLede: "Đường đó không phải mục PADE.", noObject: "Không có đối tượng", openWorkspace: "Mở không gian", selectRecord: "Chọn một bản ghi.", noRecords: "Không có bản ghi.",
   theme: "Chủ đề", themeLight: "Sáng", themeDark: "Tối", themeSystem: "Hệ thống", language: "Ngôn ngữ", clock: "Đồng hồ thế giới", voice: "Giọng", listen: "Nghe", stop: "Dừng", speaking: "Đang nói", typeInstead: "Nói hoặc gõ",
-  voiceDevice: "Giọng thiết bị. Giọng Grok chưa được cấu hình trên máy này.", voiceGrok: "Giọng Grok", voiceDenied: "Micrô bị từ chối. Hãy gõ.", voiceUnsupported: "Trình duyệt này không có nhận dạng giọng nói. Hãy gõ.",
+  voiceDevice: "Giọng thiết bị. Giọng PADE chưa được cấu hình trên máy này.", voicePADE: "Giọng PADE", voiceDenied: "Micrô bị từ chối. Hãy gõ.", voiceUnsupported: "Trình duyệt này không có nhận dạng giọng nói. Hãy gõ.",
   helpTitle: "Bàn phím", helpSearch: "tìm", helpGo: "rồi phím mục trên thanh", helpList: "di chuyển trong danh sách. Enter mở không gian", helpThis: "danh sách này. Esc đóng", close: "Đóng",
   tabOverview: "tổng quan", tabEvidence: "bằng chứng", tabLineage: "dòng dõi", tabRuns: "lần chạy", tabSafety: "an toàn", tabDecisions: "quyết định", tabActivity: "hoạt động",
   ledeOperations: "Mặt phẳng điều khiển AI vật lý. Triển khai, chấp nhận, phán quyết và thu lại lỗi trên cùng các đối tượng.",
@@ -147,11 +147,11 @@ export const vi: Messages = fill({
 
 export const id: Messages = fill({
   brandSub: "Bidang kendali jaminan", gOperate: "Operasi", gEvidence: "Bukti", gLearn: "Belajar", gAssure: "Jaminan", gLoop: "Tutup lingkar", gSystem: "Sistem",
-  navOverview: "Ikhtisar", navDeployments: "Penerapan", navRegistry: "Daftar data", navDemonstrations: "Demonstrasi", navEmbodiments: "Badan", navEvidence: "Bukti", navDatasets: "Pabrik data", navExperiments: "Percobaan", navSimulation: "Simulasi", navFailures: "Atlas gagal", navAcquisition: "Pengumpulan aktif", navStandards: "Standar", pageOperations: "Operasi",
+  navOverview: "Ikhtisar", navDeployments: "Penerapan", navRegistry: "Daftar data", navDemonstrations: "Demonstrasi", navEmbodiments: "Badan", navEvidence: "Bukti", navDatasets: "Pabrik data", navExperiments: "Percobaan", navSimulation: "Simulasi", navFailures: "Atlas gagal", navAcquisition: "Pengumpulan aktif", navFeeds: "Pengumpulan", navStandards: "Standar", pageOperations: "Operasi",
   search: "Cari rekaman", environment: "Lingkungan", release: "Rilis", releaseNone: "tidak ada yang terdaftar", skip: "Ke isi", sections: "Bagian", collapse: "Tutup bilah", expand: "Buka bilah",
   loading: "Memuat daftar…", updating: "Memperbarui rekaman…", apiDown: "API bidang kendali tidak tersedia.", notFoundTitle: "Tidak ada di bidang kendali", notFoundLede: "Jalur itu bukan bagian PADE.", noObject: "Tidak ada objek", openWorkspace: "Buka ruang kerja", selectRecord: "Pilih satu rekaman.", noRecords: "Tidak ada rekaman.",
   theme: "Tema", themeLight: "Terang", themeDark: "Gelap", themeSystem: "Sistem", language: "Bahasa", clock: "Jam dunia", voice: "Suara", listen: "Dengar", stop: "Berhenti", speaking: "Berbicara", typeInstead: "Bicara atau ketik",
-  voiceDevice: "Suara perangkat. Suara Grok belum diatur di mesin ini.", voiceGrok: "Suara Grok", voiceDenied: "Mikrofon ditolak. Ketik.", voiceUnsupported: "Peramban ini tidak punya pengenalan ucapan. Ketik.",
+  voiceDevice: "Suara perangkat. Suara PADE belum diatur di mesin ini.", voicePADE: "Suara PADE", voiceDenied: "Mikrofon ditolak. Ketik.", voiceUnsupported: "Peramban ini tidak punya pengenalan ucapan. Ketik.",
   helpTitle: "Papan ketik", helpSearch: "cari", helpGo: "lalu tombol bagian pada bilah", helpList: "bergerak di daftar. Enter membuka ruang", helpThis: "daftar ini. Esc menutup", close: "Tutup",
   tabOverview: "ikhtisar", tabEvidence: "bukti", tabLineage: "silsilah", tabRuns: "jalan", tabSafety: "keselamatan", tabDecisions: "keputusan", tabActivity: "kegiatan",
   ledeOperations: "Bidang kendali AI fisik. Penerapan, penerimaan, putusan, dan pengumpulan ulang kegagalan pada objek yang sama.",
@@ -182,11 +182,11 @@ export const id: Messages = fill({
 
 export const bn: Messages = fill({
   brandSub: "নিশ্চয়তা নিয়ন্ত্রণ তল", gOperate: "চালনা", gEvidence: "প্রমাণ", gLearn: "শেখা", gAssure: "নিশ্চয়তা", gLoop: "চক্র বন্ধ", gSystem: "ব্যবস্থা",
-  navOverview: "সারাংশ", navDeployments: "স্থাপন", navRegistry: "তথ্য খাতা", navDemonstrations: "প্রদর্শন", navEmbodiments: "দেহ", navEvidence: "প্রমাণ", navDatasets: "তথ্য কারখানা", navExperiments: "পরীক্ষা", navSimulation: "অনুকরণ", navFailures: "ব্যর্থতার মানচিত্র", navAcquisition: "সক্রিয় সংগ্রহ", navStandards: "মান", pageOperations: "চালনা",
+  navOverview: "সারাংশ", navDeployments: "স্থাপন", navRegistry: "তথ্য খাতা", navDemonstrations: "প্রদর্শন", navEmbodiments: "দেহ", navEvidence: "প্রমাণ", navDatasets: "তথ্য কারখানা", navExperiments: "পরীক্ষা", navSimulation: "অনুকরণ", navFailures: "ব্যর্থতার মানচিত্র", navAcquisition: "সক্রিয় সংগ্রহ", navFeeds: "সংগ্রহ", navStandards: "মান", pageOperations: "চালনা",
   search: "নথি খুঁজুন", environment: "পরিবেশ", release: "সংস্করণ", releaseNone: "কিছু নথিভুক্ত নয়", skip: "বিষয়ে যান", sections: "অংশ", collapse: "দণ্ড গুটান", expand: "দণ্ড খুলুন",
   loading: "খাতা লোড হচ্ছে…", updating: "নথি হালনাগাদ হচ্ছে…", apiDown: "নিয়ন্ত্রণ তলের API নেই।", notFoundTitle: "নিয়ন্ত্রণ তলে নেই", notFoundLede: "এই পথ PADE-র অংশ নয়।", noObject: "কোনো বস্তু নেই", openWorkspace: "কর্মস্থল খুলুন", selectRecord: "একটি নথি বেছে নিন।", noRecords: "কোনো নথি নেই।",
   theme: "রূপ", themeLight: "হালকা", themeDark: "গাঢ়", themeSystem: "ব্যবস্থা", language: "ভাষা", clock: "বিশ্বঘড়ি", voice: "স্বর", listen: "শুনুন", stop: "থামুন", speaking: "বলছে", typeInstead: "বলুন বা লিখুন",
-  voiceDevice: "যন্ত্রের স্বর। এই মেশিনে Grok স্বর বসানো নেই।", voiceGrok: "Grok স্বর", voiceDenied: "মাইক্রোফোন প্রত্যাখ্যাত। লিখুন।", voiceUnsupported: "এই ব্রাউজারে কথ্য শনাক্ত নেই। লিখুন।",
+  voiceDevice: "যন্ত্রের স্বর। এই মেশিনে PADE স্বর বসানো নেই।", voicePADE: "PADE স্বর", voiceDenied: "মাইক্রোফোন প্রত্যাখ্যাত। লিখুন।", voiceUnsupported: "এই ব্রাউজারে কথ্য শনাক্ত নেই। লিখুন।",
   helpTitle: "কীবোর্ড", helpSearch: "খোঁজ", helpGo: "তারপর দণ্ডের অংশ-চাবি", helpList: "তালিকায় চলুন। Enter কর্মস্থল খোলে", helpThis: "এই তালিকা। Esc বন্ধ করে", close: "বন্ধ",
   tabOverview: "সারাংশ", tabEvidence: "প্রমাণ", tabLineage: "বংশ", tabRuns: "চলন", tabSafety: "নিরাপত্তা", tabDecisions: "সিদ্ধান্ত", tabActivity: "কার্য",
   ledeOperations: "ভৌত কৃত্রিম বুদ্ধির নিয়ন্ত্রণ তল। স্থাপন, গ্রহণ, রায় ও ব্যর্থতার পুনঃসংগ্রহ একই বস্তুতে।",
@@ -217,11 +217,11 @@ export const bn: Messages = fill({
 
 export const th: Messages = fill({
   brandSub: "ระนาบควบคุมการรับรอง", gOperate: "ปฏิบัติการ", gEvidence: "หลักฐาน", gLearn: "เรียนรู้", gAssure: "รับรอง", gLoop: "ปิดวง", gSystem: "ระบบ",
-  navOverview: "ภาพรวม", navDeployments: "การวางระบบ", navRegistry: "ทะเบียนข้อมูล", navDemonstrations: "การสาธิต", navEmbodiments: "ร่างกาย", navEvidence: "หลักฐาน", navDatasets: "โรงข้อมูล", navExperiments: "การทดลอง", navSimulation: "การจำลอง", navFailures: "แผนที่ความล้มเหลว", navAcquisition: "การเก็บเชิงรุก", navStandards: "มาตรฐาน", pageOperations: "ปฏิบัติการ",
+  navOverview: "ภาพรวม", navDeployments: "การวางระบบ", navRegistry: "ทะเบียนข้อมูล", navDemonstrations: "การสาธิต", navEmbodiments: "ร่างกาย", navEvidence: "หลักฐาน", navDatasets: "โรงข้อมูล", navExperiments: "การทดลอง", navSimulation: "การจำลอง", navFailures: "แผนที่ความล้มเหลว", navAcquisition: "การเก็บเชิงรุก", navFeeds: "การเก็บ", navStandards: "มาตรฐาน", pageOperations: "ปฏิบัติการ",
   search: "ค้นระเบียน", environment: "สภาพแวดล้อม", release: "รุ่น", releaseNone: "ยังไม่ลงทะเบียน", skip: "ข้ามไปเนื้อหา", sections: "ส่วน", collapse: "พับแถบ", expand: "กางแถบ",
   loading: "กำลังโหลดทะเบียน…", updating: "กำลังอัปเดตระเบียน…", apiDown: "API ของระนาบควบคุมใช้ไม่ได้", notFoundTitle: "ไม่อยู่ในระนาบควบคุม", notFoundLede: "เส้นทางนั้นไม่ใช่ส่วนของ PADE", noObject: "ไม่มีวัตถุ", openWorkspace: "เปิดพื้นที่ทำงาน", selectRecord: "เลือกระเบียน", noRecords: "ไม่มีระเบียน",
   theme: "ธีม", themeLight: "สว่าง", themeDark: "มืด", themeSystem: "ระบบ", language: "ภาษา", clock: "นาฬิกาโลก", voice: "เสียง", listen: "ฟัง", stop: "หยุด", speaking: "กำลังพูด", typeInstead: "พูดหรือพิมพ์",
-  voiceDevice: "เสียงของเครื่อง ไม่ได้ตั้งเสียง Grok บนเครื่องนี้", voiceGrok: "เสียง Grok", voiceDenied: "ไมโครโฟนถูกปฏิเสธ ให้พิมพ์", voiceUnsupported: "เบราว์เซอร์นี้ไม่รู้จำเสียง ให้พิมพ์",
+  voiceDevice: "เสียงของเครื่อง ไม่ได้ตั้งเสียง PADE บนเครื่องนี้", voicePADE: "เสียง PADE", voiceDenied: "ไมโครโฟนถูกปฏิเสธ ให้พิมพ์", voiceUnsupported: "เบราว์เซอร์นี้ไม่รู้จำเสียง ให้พิมพ์",
   helpTitle: "แป้นพิมพ์", helpSearch: "ค้น", helpGo: "แล้วกดปุ่มส่วนบนแถบ", helpList: "เลื่อนในรายการ Enter เปิดพื้นที่", helpThis: "รายการนี้ Esc ปิด", close: "ปิด",
   tabOverview: "ภาพรวม", tabEvidence: "หลักฐาน", tabLineage: "สาย", tabRuns: "การรัน", tabSafety: "ความปลอดภัย", tabDecisions: "การตัดสิน", tabActivity: "กิจกรรม",
   ledeOperations: "ระนาบควบคุมปัญญาประดิษฐ์ทางกาย การวางระบบ การรับเข้า คำตัดสิน และการเก็บความล้มเหลวใหม่บนวัตถุเดียวกัน",
@@ -252,11 +252,11 @@ export const th: Messages = fill({
 
 export const fa: Messages = fill({
   brandSub: "صفحهٔ کنترل تضمین", gOperate: "بهره‌برداری", gEvidence: "مدرک", gLearn: "یادگیری", gAssure: "تضمین", gLoop: "بستن حلقه", gSystem: "سامانه",
-  navOverview: "نمای کلی", navDeployments: "استقرارها", navRegistry: "دفتر داده", navDemonstrations: "نمایش‌ها", navEmbodiments: "بدن‌ها", navEvidence: "مدرک", navDatasets: "کارخانهٔ داده", navExperiments: "آزمایش‌ها", navSimulation: "شبیه‌سازی", navFailures: "نقشهٔ شکست", navAcquisition: "گردآوری فعال", navStandards: "هنجارها", pageOperations: "عملیات",
+  navOverview: "نمای کلی", navDeployments: "استقرارها", navRegistry: "دفتر داده", navDemonstrations: "نمایش‌ها", navEmbodiments: "بدن‌ها", navEvidence: "مدرک", navDatasets: "کارخانهٔ داده", navExperiments: "آزمایش‌ها", navSimulation: "شبیه‌سازی", navFailures: "نقشهٔ شکست", navAcquisition: "گردآوری فعال", navFeeds: "گردآوری", navStandards: "هنجارها", pageOperations: "عملیات",
   search: "جستجوی رکورد", environment: "محیط", release: "نسخه", releaseNone: "هیچ ثبت نشده", skip: "برو به محتوا", sections: "بخش‌ها", collapse: "جمع کردن نوار", expand: "باز کردن نوار",
   loading: "در حال بار کردن دفتر…", updating: "در حال به‌روزرسانی رکورد…", apiDown: "رابط صفحهٔ کنترل در دسترس نیست.", notFoundTitle: "در صفحهٔ کنترل نیست", notFoundLede: "این مسیر بخش PADE نیست.", noObject: "شیئی نیست", openWorkspace: "فضای کار را باز کن", selectRecord: "یک رکورد برگزینید.", noRecords: "رکوردی نیست.",
   theme: "زمینه", themeLight: "روشن", themeDark: "تیره", themeSystem: "سامانه", language: "زبان", clock: "ساعت جهانی", voice: "صدا", listen: "بشنو", stop: "ایست", speaking: "سخن می‌گوید", typeInstead: "بگویید یا بنویسید",
-  voiceDevice: "صدای دستگاه. صدای Grok روی این ماشین تنظیم نشده است.", voiceGrok: "صدای Grok", voiceDenied: "میکروفون رد شد. بنویسید.", voiceUnsupported: "این مرورگر بازشناسی گفتار ندارد. بنویسید.",
+  voiceDevice: "صدای دستگاه. صدای PADE روی این ماشین تنظیم نشده است.", voicePADE: "صدای PADE", voiceDenied: "میکروفون رد شد. بنویسید.", voiceUnsupported: "این مرورگر بازشناسی گفتار ندارد. بنویسید.",
   helpTitle: "صفحه‌کلید", helpSearch: "جستجو", helpGo: "سپس کلید بخش روی نوار", helpList: "حرکت در فهرست. Enter فضا را باز می‌کند", helpThis: "این فهرست. Esc می‌بندد", close: "بستن",
   tabOverview: "نما", tabEvidence: "مدرک", tabLineage: "تبار", tabRuns: "اجراها", tabSafety: "ایمنی", tabDecisions: "تصمیم‌ها", tabActivity: "فعالیت",
   ledeOperations: "صفحهٔ کنترل هوش مصنوعی فیزیکی. استقرار، پذیرش، حکم و گردآوری دوبارهٔ شکست روی همان اشیاء.",
@@ -287,11 +287,11 @@ export const fa: Messages = fill({
 
 export const ur: Messages = fill({
   brandSub: "یقین کا کنٹرول سطح", gOperate: "چلانا", gEvidence: "ثبوت", gLearn: "سیکھنا", gAssure: "یقین", gLoop: "چکر بند", gSystem: "نظام",
-  navOverview: "جائزہ", navDeployments: "تعیناتیاں", navRegistry: "ڈیٹا رجسٹر", navDemonstrations: "مظاہرے", navEmbodiments: "جسم", navEvidence: "ثبوت", navDatasets: "ڈیٹا کارخانہ", navExperiments: "تجربے", navSimulation: "نقل", navFailures: "ناکامی کا نقشہ", navAcquisition: "فعال جمع", navStandards: "معیار", pageOperations: "آپریشن",
+  navOverview: "جائزہ", navDeployments: "تعیناتیاں", navRegistry: "ڈیٹا رجسٹر", navDemonstrations: "مظاہرے", navEmbodiments: "جسم", navEvidence: "ثبوت", navDatasets: "ڈیٹا کارخانہ", navExperiments: "تجربے", navSimulation: "نقل", navFailures: "ناکامی کا نقشہ", navAcquisition: "فعال جمع", navFeeds: "جمع", navStandards: "معیار", pageOperations: "آپریشن",
   search: "ریکارڈ تلاش", environment: "ماحول", release: "اجراء", releaseNone: "کوئی درج نہیں", skip: "مواد پر جائیں", sections: "حصے", collapse: "پٹی سمیٹیں", expand: "پٹی کھولیں",
   loading: "رجسٹر لوڈ ہو رہا ہے…", updating: "ریکارڈ تازہ ہو رہا ہے…", apiDown: "کنٹرول سطح کا API دستیاب نہیں۔", notFoundTitle: "کنٹرول سطح میں نہیں", notFoundLede: "یہ راستہ PADE کا حصہ نہیں۔", noObject: "کوئی شے نہیں", openWorkspace: "کام گاہ کھولیں", selectRecord: "ایک ریکارڈ چنیں۔", noRecords: "کوئی ریکارڈ نہیں۔",
   theme: "انداز", themeLight: "روشن", themeDark: "گہرا", themeSystem: "نظام", language: "زبان", clock: "عالمی گھڑی", voice: "آواز", listen: "سنیں", stop: "رکیں", speaking: "بول رہا ہے", typeInstead: "بولیں یا لکھیں",
-  voiceDevice: "آلہ کی آواز۔ اس مشین پر Grok آواز سیٹ نہیں۔", voiceGrok: "Grok آواز", voiceDenied: "مائیکروفون مسترد۔ لکھیں۔", voiceUnsupported: "اس براؤزر میں تقریر کی پہچان نہیں۔ لکھیں۔",
+  voiceDevice: "آلہ کی آواز۔ اس مشین پر PADE آواز سیٹ نہیں۔", voicePADE: "PADE آواز", voiceDenied: "مائیکروفون مسترد۔ لکھیں۔", voiceUnsupported: "اس براؤزر میں تقریر کی پہچان نہیں۔ لکھیں۔",
   helpTitle: "کی بورڈ", helpSearch: "تلاش", helpGo: "پھر پٹی کی حصے کی کلید", helpList: "فہرست میں چلیں۔ Enter کام گاہ کھولتا ہے", helpThis: "یہ فہرست۔ Esc بند کرتا ہے", close: "بند",
   tabOverview: "جائزہ", tabEvidence: "ثبوت", tabLineage: "نسب", tabRuns: "دوڑ", tabSafety: "حفاظت", tabDecisions: "فیصلے", tabActivity: "سرگرمی",
   ledeOperations: "جسمانی مصنوعی ذہانت کا کنٹرول سطح۔ تعیناتی، قبولیت، فیصلے اور ناکامی کا دوبارہ جمع انہی اشیاء پر۔",
@@ -322,11 +322,11 @@ export const ur: Messages = fill({
 
 export const sw: Messages = fill({
   brandSub: "Ndege ya udhibiti wa uhakika", gOperate: "Endesha", gEvidence: "Ushahidi", gLearn: "Jifunze", gAssure: "Hakikisha", gLoop: "Funga mzunguko", gSystem: "Mfumo",
-  navOverview: "Muhtasari", navDeployments: "Usambazaji", navRegistry: "Daftari la data", navDemonstrations: "Maonyesho", navEmbodiments: "Miili", navEvidence: "Ushahidi", navDatasets: "Kiwanda cha data", navExperiments: "Majaribio", navSimulation: "Uigaji", navFailures: "Atlasi ya kushindwa", navAcquisition: "Ukusanyaji tendaji", navStandards: "Viwango", pageOperations: "Uendeshaji",
+  navOverview: "Muhtasari", navDeployments: "Usambazaji", navRegistry: "Daftari la data", navDemonstrations: "Maonyesho", navEmbodiments: "Miili", navEvidence: "Ushahidi", navDatasets: "Kiwanda cha data", navExperiments: "Majaribio", navSimulation: "Uigaji", navFailures: "Atlasi ya kushindwa", navAcquisition: "Ukusanyaji tendaji", navFeeds: "Ukusanyaji", navStandards: "Viwango", pageOperations: "Uendeshaji",
   search: "Tafuta rekodi", environment: "Mazingira", release: "Toleo", releaseNone: "hakuna lililosajiliwa", skip: "Nenda kwa maudhui", sections: "Sehemu", collapse: "Kunja upau", expand: "Kunjua upau",
   loading: "Inapakia daftari…", updating: "Inasasisha rekodi…", apiDown: "API ya ndege ya udhibiti haipatikani.", notFoundTitle: "Haipo kwenye ndege ya udhibiti", notFoundLede: "Njia hiyo si sehemu ya PADE.", noObject: "Hakuna kitu", openWorkspace: "Fungua nafasi", selectRecord: "Chagua rekodi.", noRecords: "Hakuna rekodi.",
   theme: "Mandhari", themeLight: "Mwanga", themeDark: "Giza", themeSystem: "Mfumo", language: "Lugha", clock: "Saa ya dunia", voice: "Sauti", listen: "Sikiliza", stop: "Simama", speaking: "Inazungumza", typeInstead: "Sema au andika",
-  voiceDevice: "Sauti ya kifaa. Sauti ya Grok haijawekwa kwenye mashine hii.", voiceGrok: "Sauti ya Grok", voiceDenied: "Kipaza sauti kimekataliwa. Andika.", voiceUnsupported: "Kivinjari hiki hakina utambuzi wa usemi. Andika.",
+  voiceDevice: "Sauti ya kifaa. Sauti ya PADE haijawekwa kwenye mashine hii.", voicePADE: "Sauti ya PADE", voiceDenied: "Kipaza sauti kimekataliwa. Andika.", voiceUnsupported: "Kivinjari hiki hakina utambuzi wa usemi. Andika.",
   helpTitle: "Kibodi", helpSearch: "tafuta", helpGo: "kisha kitufe cha sehemu kwenye upau", helpList: "songa kwenye orodha. Enter hufungua nafasi", helpThis: "orodha hii. Esc huifunga", close: "Funga",
   tabOverview: "muhtasari", tabEvidence: "ushahidi", tabLineage: "asili", tabRuns: "mbio", tabSafety: "usalama", tabDecisions: "maamuzi", tabActivity: "shughuli",
   ledeOperations: "Ndege ya udhibiti ya AI ya kimwili. Usambazaji, ukubali, hukumu na ukusanyaji upya wa kushindwa juu ya vitu vilevile.",

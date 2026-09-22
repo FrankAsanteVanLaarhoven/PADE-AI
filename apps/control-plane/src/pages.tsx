@@ -49,7 +49,6 @@ export function OverviewPage() {
   const query = useGet<Overview>("/api/v1/overview", env);
   return (
     <PageFrame title={t("pageOperations")}>
-      <p className="lede">{t("ledeOperations")}</p>
       <QueryNote loading={query.loading} error={query.error} />
       {query.data ? <OverviewBody data={query.data} /> : null}
     </PageFrame>
@@ -60,7 +59,7 @@ function OverviewBody({ data }: { data: Overview }) {
   const { t } = useI18n();
   return (
     <>
-      <p className="banner">{data.banner.includes("not copied") ? t("bannerField") : t("bannerLab")}</p>
+      <SourceLine origin={data.deployments.origin} source={data.deployments.source} />
       <div className="health">
         {data.health.map((item) => (
           <Link key={item.label} to={item.href}>
@@ -205,7 +204,7 @@ function RecordTable({ view }: { view: ListView }) {
   );
 }
 
-function ListPage({ titleKey, ledeKey, path }: { titleKey: MessageKey; ledeKey: MessageKey; path: string }) {
+function ListPage({ titleKey, path }: { titleKey: MessageKey; path: string }) {
   const { env } = useEnv();
   const { t } = useI18n();
   const query = useGet<ListView>(path, env);
@@ -214,7 +213,6 @@ function ListPage({ titleKey, ledeKey, path }: { titleKey: MessageKey; ledeKey: 
       <QueryNote loading={query.loading} error={query.error} />
       {query.data ? (
         <>
-          <p className="lede">{query.data.origin === "unavailable" ? query.data.lede : t(ledeKey)}</p>
           <SourceLine origin={query.data.origin} source={query.data.source} />
           {query.data.unavailable ? <Unavailable {...query.data.unavailable} /> : <ListBody view={query.data} />}
         </>
@@ -223,13 +221,13 @@ function ListPage({ titleKey, ledeKey, path }: { titleKey: MessageKey; ledeKey: 
   );
 }
 
-export const RegistryPage = () => <ListPage titleKey="navRegistry" ledeKey="ledeRegistry" path="/api/v1/registry" />;
-export const DemonstrationsPage = () => <ListPage titleKey="navDemonstrations" ledeKey="ledeDemos" path="/api/v1/demonstrations" />;
-export const EmbodimentsPage = () => <ListPage titleKey="navEmbodiments" ledeKey="ledeEmbodiments" path="/api/v1/embodiments" />;
-export const VerdictsPage = () => <ListPage titleKey="navVerdict" ledeKey="ledeVerdicts" path="/api/v1/verdicts" />;
-export const FailuresPage = () => <ListPage titleKey="navFailures" ledeKey="ledeFailures" path="/api/v1/failures" />;
-export const AcquisitionPage = () => <ListPage titleKey="navAcquisition" ledeKey="ledeAcquisition" path="/api/v1/acquisitions" />;
-export const DeploymentsPage = () => <ListPage titleKey="navDeployments" ledeKey="ledeDeployments" path="/api/v1/deployments" />;
+export const RegistryPage = () => <ListPage titleKey="navRegistry" path="/api/v1/registry" />;
+export const DemonstrationsPage = () => <ListPage titleKey="navDemonstrations" path="/api/v1/demonstrations" />;
+export const EmbodimentsPage = () => <ListPage titleKey="navEmbodiments" path="/api/v1/embodiments" />;
+export const VerdictsPage = () => <ListPage titleKey="navVerdict" path="/api/v1/verdicts" />;
+export const FailuresPage = () => <ListPage titleKey="navFailures" path="/api/v1/failures" />;
+export const AcquisitionPage = () => <ListPage titleKey="navAcquisition" path="/api/v1/acquisitions" />;
+export const DeploymentsPage = () => <ListPage titleKey="navDeployments" path="/api/v1/deployments" />;
 
 interface DatasetPayload {
   title: string;
@@ -255,7 +253,6 @@ export function DatasetsPage() {
       <QueryNote loading={query.loading} error={query.error} />
       {query.data ? (
         <>
-          <p className="lede">{query.data.origin === "unavailable" ? query.data.lede : t("ledeDatasets")}</p>
           {query.data.source ? <SourceLine origin={query.data.origin} source={query.data.source} /> : null}
           {query.data.weighting ? <p className="note">{t("weighting")}: <Tx text={query.data.weighting} />.</p> : null}
           {query.data.unavailable ? <Unavailable {...query.data.unavailable} /> : null}
@@ -322,7 +319,6 @@ export function ExperimentsPage() {
       <QueryNote loading={query.loading} error={query.error} />
       {query.data ? (
         <>
-          <p className="lede">{query.data.origin === "unavailable" ? query.data.lede : t("ledeExperiments")}</p>
           {query.data.source ? <SourceLine origin={query.data.origin} source={query.data.source} /> : null}
           {query.data.unavailable ? <Unavailable reason={query.data.unavailable.reason} contract={query.data.unavailable.contract} /> : null}
           {query.data.arms.length ? (
@@ -383,8 +379,6 @@ export function SimulationPage() {
       <QueryNote loading={query.loading} error={query.error} />
       {query.data ? (
         <>
-          <p className="lede">{t("ledeSimulation")}</p>
-          <SourceLine origin={query.data.origin} source="plans are fixture specifications" />
           <div className="table-wrap boxed">
             <table className="data">
               <thead>
@@ -467,7 +461,6 @@ export function FleetPage() {
       <QueryNote loading={query.loading} error={query.error} />
       {query.data ? (
         <>
-          <p className="lede">{t("ledeFleet")}</p>
           <Unavailable reason={query.data.runtime.reason} contract={query.data.runtime.contract} />
           <p className="note">
             {t("tuple")}: <span className="mono">{query.data.tuple.join(" · ")}</span>
@@ -495,7 +488,6 @@ export function SentinelPage() {
       <QueryNote loading={query.loading} error={query.error} />
       {query.data ? (
         <>
-          <p className="lede">{t("ledeSentinel")}</p>
           <Unavailable reason={query.data.stream.reason} contract={query.data.stream.contract} />
           <h2 style={{ fontSize: 13, margin: "16px 0 8px" }}>{t("fixtureIncidents")}</h2>
           <SourceLine origin={query.data.incidents.origin} source={query.data.incidents.source} />
@@ -526,12 +518,11 @@ export function EvidencePage() {
       <QueryNote loading={query.loading} error={query.error} />
       {query.data ? (
         <>
-          <p className="lede">{query.data.origin === "unavailable" ? query.data.lede : t("ledeEvidence")}</p>
           {query.data.source ? <SourceLine origin={query.data.origin} source={query.data.source} /> : null}
           {query.data.unavailable ? <Unavailable {...query.data.unavailable} /> : null}
           {query.data.id ? (
             <p className="note">
-              <Link to={`/o/evidence/${query.data.id}`}>{query.data.id}</Link> · {query.data.present}/{query.data.total} {t("presentRule")}. {t("manifestNote")}
+              <Link to={`/o/evidence/${query.data.id}`}>{query.data.id}</Link> · {query.data.present}/{query.data.total}
             </p>
           ) : null}
           {query.data.items.length ? (

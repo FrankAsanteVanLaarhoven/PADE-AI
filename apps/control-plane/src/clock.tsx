@@ -23,7 +23,6 @@ export function Clock() {
       </button>
       {open ? (
         <div className="clock-panel" role="dialog" aria-label={t("clock")}>
-          <p className="kicker">{t("clock")}</p>
           <ul>
             {LOCALES.map((item) => (
               <li key={item.id} data-active={item.id === locale ? "true" : "false"}>
