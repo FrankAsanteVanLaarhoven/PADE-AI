@@ -41,6 +41,8 @@ Marginal demonstration value (`mdv-0.1.0`) ranks the next capture from informati
 
 A route with a missing tool is blocked. That is the behaviour.
 
+How the loop runs is `docs/HOW-IT-WORKS.md`. Which harnesses can be trained is `docs/TRAINING.md`. None of them can, on the data this repository holds.
+
 ## Harness
 
 The master is a router, not a general model.

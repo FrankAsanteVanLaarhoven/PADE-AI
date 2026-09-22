@@ -36,7 +36,7 @@ Specialists:
 
 `verdict.propose` does not start a robot. The policy kernel does not call a model.
 
-Own harness models will be trained per specialist. Until a model is trained, the route must say so. OpenRouter selects frontier models beside those harnesses. It does not replace the kernel.
+Own harness models will be trained per specialist. Until a model is trained, the route must say so. OpenRouter selects frontier models beside those harnesses. It does not replace the kernel. Readiness is `docs/TRAINING.md`. No harness is trainable on the authored fixture.
 
 ## Backend
 
