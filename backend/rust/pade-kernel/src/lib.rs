@@ -68,6 +68,7 @@ pub struct Quality {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AdmissionInput {
     pub quality: Quality,
     pub provenance: String,
@@ -100,6 +101,7 @@ pub enum Gate {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AdmissionDecision {
     pub policy_version: String,
     pub admission: AdmissionState,

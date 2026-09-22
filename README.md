@@ -78,7 +78,7 @@ make test
 make build
 ```
 
-`bin/pade` listens on `:8788` unless `PADE_GO_ADDR` is set.
+`bin/pade` listens on `127.0.0.1:8788` unless `PADE_GO_ADDR` is set. A non-loopback address refuses to start unless `PADE_OPERATOR_TOKEN` is set.
 
 ```bash
 curl -s localhost:8788/health
@@ -96,6 +96,22 @@ export OPENROUTER_API_KEY=...   # server only, never in the client
 ```
 
 There is no key in this repository.
+
+## Production
+
+The fixture control plane stays on `127.0.0.1` with no token. To keep operator actions and collection:
+
+```bash
+export DATABASE_URL=postgres://...
+export PADE_OPERATOR_TOKEN=...          # required before a non-loopback bind
+export PADE_OPERATOR_NAME=ada
+export PADE_BIND=0.0.0.0                # refused when the token is empty
+export PADE_KERNEL_BIN=backend/rust/pade-kernel/target/release/kernel
+```
+
+A collected sample becomes a demonstration. If the sample body is an admission record, `admission-0.1.0` runs. If it is not, the row stays `incomplete` and no score is invented. The audit line is signed with the operator token. Dataset membership is not changed.
+
+`registry.read` loads that admission record. `policy.evaluate` is the Rust kernel. The route blocks when either the record or the kernel is missing.
 
 ## Control plane
 

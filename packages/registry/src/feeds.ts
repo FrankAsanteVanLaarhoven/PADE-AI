@@ -43,6 +43,12 @@ export class FeedStore {
     return this.feeds.map((feed) => ({ ...feed, samples: [...feed.samples] }));
   }
 
+  restore(records: FeedRecord[]) {
+    this.feeds = records.map((feed) => ({ ...feed, samples: [...feed.samples] }));
+    this.seq = maxNumeric(this.feeds.map((feed) => feed.id), "fd-") + 1;
+    this.sampleSeq = maxNumeric(this.feeds.flatMap((feed) => feed.samples.map((sample) => sample.id)), "smp-") + 1;
+  }
+
   add(input: { name: string; what: string; use: string; modelClass: ModelClass; endpoint: string | null }): FeedRecord {
     const id = `fd-${this.seq++}`;
     const feed: FeedRecord = {
@@ -108,6 +114,14 @@ export class FeedStore {
     if (!feed) throw new Error(`No feed ${id}`);
     return feed;
   }
+}
+
+function maxNumeric(ids: string[], prefix: string): number {
+  return ids.reduce((max, id) => {
+    if (!id.startsWith(prefix)) return max;
+    const value = Number(id.slice(prefix.length));
+    return Number.isFinite(value) ? Math.max(max, value) : max;
+  }, 0);
 }
 
 function clip(body: unknown): string {

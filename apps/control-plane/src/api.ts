@@ -7,6 +7,7 @@ export async function api<T>(path: string, env: string, init?: RequestInit): Pro
       accept: "application/json",
       "content-type": "application/json",
       "x-pade-env": env,
+      ...operatorHeader(),
       ...(init?.headers ?? {}),
     },
   });
@@ -21,6 +22,15 @@ export async function api<T>(path: string, env: string, init?: RequestInit): Pro
     throw new ApiError(message);
   }
   return (await response.json()) as T;
+}
+
+function operatorHeader(): Record<string, string> {
+  try {
+    const token = sessionStorage.getItem("pade-operator");
+    return token ? { authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
 }
 
 export function post<T>(path: string, env: string, body: unknown): Promise<T> {

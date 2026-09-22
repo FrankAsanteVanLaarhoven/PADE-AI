@@ -153,6 +153,13 @@ a { color: inherit; }
   max-width: 180px;
 }
 .scope select:disabled { color: var(--muted); }
+.operator {
+  width: 128px;
+  height: 28px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  padding: 0 8px;
+}
 
 .page { padding: 18px 22px 48px; }
 h1 {

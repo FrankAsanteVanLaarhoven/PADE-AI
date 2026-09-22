@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --parallel --filter @pade/api --filter @pade/control-plane dev",
-    "test": "pnpm --filter @pade/domain test && pnpm --filter @pade/registry test",
+    "test": "pnpm --filter @pade/domain test && pnpm --filter @pade/registry test && pnpm --filter @pade/api test",
     "typecheck": "pnpm -r --if-present typecheck",
     "gate": "node scripts/gate.mjs",
     "qa": "node scripts/qa.mjs"

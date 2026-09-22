@@ -2,6 +2,7 @@ package route
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"strings"
 
@@ -12,7 +13,8 @@ var errNoCompleter = errors.New("openrouter completer is missing")
 
 type Result struct {
 	harness.Route
-	Completion string `json:"completion,omitempty"`
+	Completion string          `json:"completion,omitempty"`
+	ToolResult json.RawMessage `json:"toolResult,omitempty"`
 }
 
 type Completer func(ctx context.Context, model, system, prompt string) (string, error)

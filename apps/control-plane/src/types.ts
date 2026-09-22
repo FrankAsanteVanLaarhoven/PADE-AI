@@ -57,6 +57,7 @@ export interface Meta {
   mode: string;
   persistence: string;
   session: string;
+  auth?: string;
   environment: string;
   environments: { id: string; label: string; detail: string }[];
   release: string | null;

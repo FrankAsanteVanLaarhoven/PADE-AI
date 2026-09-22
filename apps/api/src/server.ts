@@ -1,14 +1,33 @@
 import { serve } from "@hono/node-server";
-import { FeedStore, MODEL_CLASSES, MemoryRegistry, RegistryError } from "@pade/registry";
+import { admitSample, FeedStore, type Ledger, MemoryLedger, MemoryRegistry, MODEL_CLASSES, RegistryError } from "@pade/registry";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { ZodError, z } from "zod";
+import { assertListenAllowed, listenHost, operatorName, operatorToken } from "./bind.js";
+import { OperatorError, resolveOperator, signAudit } from "./operator.js";
+import { openPostgres } from "./postgres.js";
+
+const token = operatorToken();
+const operator = operatorName();
+const host = listenHost();
+assertListenAllowed(host, token);
 
 const registry = new MemoryRegistry();
 const feeds = new FeedStore();
+let ledger: Ledger = new MemoryLedger();
 const app = new Hono();
 
-app.use("*", cors());
+const databaseUrl = process.env.DATABASE_URL?.trim() ?? "";
+registry.present({
+  auth: token ? "required" : "local",
+  session: token ? operator : "Unsigned local operator. No authentication.",
+  persistence: databaseUrl
+    ? "PostgreSQL. Operator actions and collection survive a restart."
+    : "Process memory. Operator actions reset when the API process restarts.",
+});
+if (token) registry.signWith((event) => signAudit(token, event));
+
+app.use("*", cors({ origin: "*", allowHeaders: ["authorization", "content-type", "accept", "x-pade-env"] }));
 
 function environment(header: string | undefined): string {
   return header ?? "lab-uk";
@@ -18,7 +37,7 @@ function respond(header: string | undefined, produce: (env: string) => unknown) 
   try {
     return Response.json(produce(environment(header)));
   } catch (error) {
-    if (error instanceof RegistryError) return Response.json({ error: error.message }, { status: error.status });
+    if (error instanceof RegistryError || error instanceof OperatorError) return Response.json({ error: error.message }, { status: error.status });
     if (error instanceof ZodError) return Response.json({ error: "Request did not match the contract." }, { status: 400 });
     console.error(error);
     return Response.json({ error: "Control plane API failed." }, { status: 500 });
@@ -27,7 +46,7 @@ function respond(header: string | undefined, produce: (env: string) => unknown) 
 
 const actorBody = z.object({ actor: z.string().min(1).default("local-operator") });
 
-app.get("/api/v1/health", (c) => c.json({ ok: true, service: "pade-api", mode: "fixture-registry" }));
+app.get("/api/v1/health", (c) => c.json({ ok: true, service: "pade-api", mode: "fixture-registry", auth: token ? "required" : "local" }));
 app.get("/api/v1/meta", (c) => respond(c.req.header("x-pade-env"), (env) => registry.meta(env)));
 app.get("/api/v1/overview", (c) => respond(c.req.header("x-pade-env"), (env) => registry.overview(env)));
 app.get("/api/v1/registry", (c) => respond(c.req.header("x-pade-env"), (env) => registry.registry(env)));
@@ -47,6 +66,11 @@ app.get("/api/v1/search", (c) => respond(c.req.header("x-pade-env"), (env) => re
 app.get("/api/v1/objects/:kind/:id", (c) =>
   respond(c.req.header("x-pade-env"), (env) => registry.object(env, c.req.param("kind"), c.req.param("id"))),
 );
+app.get("/api/v1/demonstrations/:id/admission", (c) => {
+  const row = registry.collectedRecords().find((item) => item.id === c.req.param("id"));
+  if (!row?.input) return Response.json({ error: "This demonstration has no admission record." }, { status: 404 });
+  return Response.json(row.input);
+});
 
 app.post("/api/v1/demonstrations/:id/review", (c) =>
   mutate(c, actorBody.extend({ action: z.enum(["admit", "quarantine", "reject"]) }), (env, body) =>
@@ -69,12 +93,16 @@ app.post("/api/v1/acquisitions/:id/state", (c) =>
 async function mutate<T extends z.ZodTypeAny>(
   c: { req: { header: (name: string) => string | undefined; json: () => Promise<unknown> } },
   schema: T,
-  run: (env: string, body: z.infer<T>) => unknown,
+  run: (env: string, body: z.infer<T> & { actor: string }) => unknown,
 ) {
   try {
-    const body = schema.parse(await c.req.json());
-    return respond(c.req.header("x-pade-env"), (env) => run(env, body));
+    const parsed = schema.parse(await c.req.json()) as z.infer<T> & { actor: string };
+    parsed.actor = resolveOperator(c.req.header("authorization"), parsed.actor, token, operator);
+    const response = respond(c.req.header("x-pade-env"), (env) => run(env, parsed));
+    if (response.status < 400) await persist();
+    return response;
   } catch (error) {
+    if (error instanceof RegistryError || error instanceof OperatorError) return Response.json({ error: error.message }, { status: error.status });
     if (error instanceof ZodError) return Response.json({ error: "Request did not match the contract." }, { status: 400 });
     throw error;
   }
@@ -102,31 +130,60 @@ function endpointOf(value: string | undefined): string | null {
   return url.toString();
 }
 
+function guard(authorization: string | undefined) {
+  resolveOperator(authorization, "feed", token, operator);
+}
+
 app.get("/api/v1/feeds", (c) => c.json({ feeds: feeds.list() }));
 
 app.post("/api/v1/feeds", async (c) => {
   try {
+    guard(c.req.header("authorization"));
     const body = feedBody.parse(await c.req.json());
-    return c.json(feeds.add({ ...body, endpoint: endpointOf(body.endpoint) }), 201);
+    const created = feeds.add({ ...body, endpoint: endpointOf(body.endpoint) });
+    await persist();
+    return c.json(created, 201);
   } catch (error) {
     if (error instanceof ZodError) return Response.json({ error: "Request did not match the contract." }, { status: 400 });
-    if (error instanceof RegistryError) return Response.json({ error: error.message }, { status: error.status });
+    if (error instanceof RegistryError || error instanceof OperatorError) return Response.json({ error: error.message }, { status: error.status });
     throw error;
   }
 });
 
 app.post("/api/v1/feeds/:id/samples", async (c) => {
   try {
+    guard(c.req.header("authorization"));
     const body = z.object({ body: z.unknown(), observedAt: z.string().optional() }).parse(await c.req.json());
-    return c.json(feeds.pushSample(c.req.param("id"), body.body, body.observedAt), 201);
+    const sample = recordSample(c.req.param("id"), body.body, body.observedAt);
+    await persist();
+    return c.json(sample, 201);
   } catch (error) {
     if (error instanceof ZodError) return Response.json({ error: "Request did not match the contract." }, { status: 400 });
+    if (error instanceof RegistryError || error instanceof OperatorError) return Response.json({ error: error.message }, { status: error.status });
     if (error instanceof Error && error.message.startsWith("No feed")) {
       return Response.json({ error: error.message }, { status: 404 });
     }
     throw error;
   }
 });
+
+function recordSample(id: string, body: unknown, observedAt?: string) {
+  const feed = feeds.list().find((item) => item.id === id);
+  if (!feed) throw new Error(`No feed ${id}`);
+  const sample = feeds.pushSample(id, body, observedAt);
+  registry.addCollected(
+    admitSample({
+      id: sample.id,
+      source: sample.source,
+      observedAt: sample.observedAt,
+      body,
+      what: feed.what,
+      use: feed.use,
+      modelClass: feed.modelClass,
+    }),
+  );
+  return sample;
+}
 
 async function pullFeeds() {
   await Promise.all(
@@ -144,23 +201,46 @@ async function pullFeeds() {
         } catch {
           /* the feed sent text, not JSON */
         }
-        feeds.pushSample(id, payload);
+        recordSample(id, payload);
       } catch (error) {
         feeds.markUnreachable(id, error instanceof Error ? error.message : "unreachable");
       }
     }),
   );
+  await persist();
 }
 
-setInterval(() => {
-  void pullFeeds();
-}, 2000);
+async function persist() {
+  await ledger.save({
+    runtime: registry.exportRuntime(),
+    feeds: feeds.list(),
+    collected: registry.collectedRecords(),
+  });
+}
 
 app.get("/api/v1/voice", (c) => c.json({ engine: "device" }));
 
 app.post("/api/v1/voice/speak", (c) => c.json({ engine: "device", reason: "Remote speech is not configured." }, 503));
 
 const port = Number(process.env.PADE_API_PORT ?? 8787);
-serve({ fetch: app.fetch, port, hostname: "127.0.0.1" }, () => {
-  console.log(`pade-api listening on ${port}`);
+
+async function boot() {
+  if (databaseUrl) ledger = await openPostgres(databaseUrl);
+  const snapshot = await ledger.load();
+  if (snapshot) {
+    registry.restoreRuntime(snapshot.runtime);
+    registry.replaceCollected(snapshot.collected);
+    feeds.restore(snapshot.feeds);
+  }
+  setInterval(() => {
+    void pullFeeds();
+  }, 2000);
+  serve({ fetch: app.fetch, port, hostname: host }, () => {
+    console.log(`pade-api listening on ${host}:${port}`);
+  });
+}
+
+boot().catch((error: unknown) => {
+  console.error(error);
+  process.exit(1);
 });

@@ -38,6 +38,8 @@ import {
   type AcquisitionSeed,
   type DemoSeed,
 } from "./corpus.js";
+import type { CollectedDemonstration } from "./collected.js";
+import type { RuntimeDelta } from "./ledger.js";
 import type { Field, LinkRef, ListRow, ListView, Overview, Panel, Tone, Workspace } from "./views.js";
 
 export class RegistryError extends Error {
@@ -82,6 +84,7 @@ interface AuditEvent {
   subjectKind: string;
   subjectId: string;
   session: boolean;
+  signature?: string;
 }
 
 const REVIEW_STATE: Record<ReviewAction, AdmissionState> = {
@@ -141,8 +144,15 @@ export class MemoryRegistry {
   private readonly demoState = new Map<string, DemoRuntime>();
   private readonly verdictState = new Map<string, VerdictRuntime>();
   private readonly acquisitionState = new Map<string, AcquisitionRuntime>();
-  private readonly audit: AuditEvent[];
+  private audit: AuditEvent[];
   private auditSeq = 0;
+  private collected: CollectedDemonstration[] = [];
+  private signer: ((event: AuditEvent) => string) | null = null;
+  private presentation = {
+    persistence: "Process memory. Operator actions reset when the API process restarts.",
+    session: "Unsigned local operator. No authentication.",
+    auth: "local",
+  };
 
   constructor() {
     for (const demo of demos) {
@@ -165,8 +175,9 @@ export class MemoryRegistry {
     return {
       service: "pade-api",
       mode: "fixture-registry",
-      persistence: "Process memory. Operator actions reset when the API process restarts.",
-      session: "Unsigned local operator. No authentication.",
+      persistence: this.presentation.persistence,
+      session: this.presentation.session,
+      auth: this.presentation.auth,
       environment: env,
       environments: [
         { id: ENV_LAB, label: "lab-uk", detail: "fixture corpus" },
@@ -214,12 +225,22 @@ export class MemoryRegistry {
       };
     }
 
-    const queue = demos
-      .filter((demo) => this.demoState.get(demo.id)?.review === "pending")
-      .map((demo) => {
-        const policy = evaluateAdmission(demo);
-        return { id: demo.id, task: demo.task, policy: policy.admission, tone: toneForAdmission(policy.admission) };
-      });
+    const queue = [
+      ...demos
+        .filter((demo) => this.demoState.get(demo.id)?.review === "pending")
+        .map((demo) => {
+          const policy = evaluateAdmission(demo);
+          return { id: demo.id, task: demo.task, policy: policy.admission, tone: toneForAdmission(policy.admission) };
+        }),
+      ...this.collected
+        .filter((row) => row.review !== "confirmed")
+        .map((row) => ({
+          id: row.id,
+          task: row.task,
+          policy: row.policy?.admission ?? "not run",
+          tone: row.policy ? toneForAdmission(row.policy.admission) : ("warn" as const),
+        })),
+    ];
     const openVerdicts = verdicts
       .filter((verdict) => this.verdictState.get(verdict.id)?.state === "pending")
       .map((verdict) => ({
@@ -326,6 +347,7 @@ export class MemoryRegistry {
         ],
       );
     });
+    for (const row of this.collected) rows.push(this.collectedRow(row));
     return {
       ...base,
       columns: cols(
@@ -691,6 +713,7 @@ export class MemoryRegistry {
       if (hay.includes(q)) results.push({ kind, id, title, subtitle, origin });
     };
     for (const demo of demos) push("demonstration", demo.id, demo.id, demo.task);
+    for (const row of this.collected) push("demonstration", row.id, row.id, row.task, row.origin);
     for (const embodiment of embodiments) push("embodiment", embodiment.id, embodiment.name, embodiment.className);
     for (const dataset of datasets) push("dataset", dataset.id, dataset.name, dataset.purpose);
     for (const arm of ARMS) push("experiment", arm.id, `${arm.code} ${arm.name}`, arm.question);
@@ -712,6 +735,8 @@ export class MemoryRegistry {
     if (env === ENV_FIELD) {
       throw new RegistryError(404, "field-sim has no objects. The lab-uk corpus is not in this environment.");
     }
+    const collected = this.collected.find((row) => row.id === id);
+    if (kind === "demonstration" && collected) return this.collectedWorkspace(collected);
     const workspace = this.buildObject(kind, id);
     if (!workspace) throw new RegistryError(404, `No ${kind} ${id} in lab-uk.`);
     return workspace;
@@ -720,6 +745,8 @@ export class MemoryRegistry {
   reviewDemonstration(env: string, id: string, action: ReviewAction, actor: string) {
     this.assertLab(env);
     this.assertActor(actor);
+    const collected = this.collected.find((row) => row.id === id);
+    if (collected) return this.reviewCollected(env, collected, action, actor);
     const demo = demos.find((item) => item.id === id);
     const runtime = this.demoState.get(id);
     if (!demo || !runtime) throw new RegistryError(404, `No demonstration ${id}.`);
@@ -768,6 +795,138 @@ export class MemoryRegistry {
     runtime.at = new Date().toISOString();
     this.pushAudit(actor, `Operator marked ${id} ${action}. No capture job was sent.`, "acquisition", id);
     return this.object(env, "acquisition", id);
+  }
+
+  present(next: Partial<MemoryRegistry["presentation"]>) {
+    this.presentation = { ...this.presentation, ...next };
+  }
+
+  signWith(signer: ((event: AuditEvent) => string) | null) {
+    this.signer = signer;
+  }
+
+  addCollected(row: CollectedDemonstration) {
+    this.collected = [row, ...this.collected.filter((item) => item.id !== row.id)];
+  }
+
+  replaceCollected(rows: CollectedDemonstration[]) {
+    this.collected = rows.map((row) => ({ ...row }));
+  }
+
+  collectedRecords(): CollectedDemonstration[] {
+    return this.collected.map((row) => ({ ...row }));
+  }
+
+  exportRuntime(): RuntimeDelta {
+    return {
+      demonstrations: [...this.demoState.entries()].map(([id, runtime]) => ({ id, ...runtime })),
+      verdicts: [...this.verdictState.entries()].map(([id, runtime]) => ({ id, ...runtime })),
+      acquisitions: [...this.acquisitionState.entries()].map(([id, runtime]) => ({ id, ...runtime })),
+      audit: this.audit.map((event) => ({ ...event })),
+      auditSeq: this.auditSeq,
+    };
+  }
+
+  restoreRuntime(delta: RuntimeDelta) {
+    for (const row of delta.demonstrations) {
+      const current = this.demoState.get(row.id);
+      if (current && row.operator) Object.assign(current, row);
+    }
+    for (const row of delta.verdicts) {
+      const current = this.verdictState.get(row.id);
+      if (current && row.operator) Object.assign(current, row);
+    }
+    for (const row of delta.acquisitions) {
+      const current = this.acquisitionState.get(row.id);
+      if (current && row.actor) Object.assign(current, row);
+    }
+    this.audit = delta.audit.map((event) => ({ ...event }));
+    this.auditSeq = delta.auditSeq;
+  }
+
+  private reviewCollected(env: string, row: CollectedDemonstration, action: ReviewAction, actor: string) {
+    this.assertLab(env);
+    this.assertActor(actor);
+    if (!row.policy) throw new RegistryError(409, `${row.id} has no admission result. The sample did not include the contract.`);
+    if (row.review === "confirmed") throw new RegistryError(409, `${row.id} is already confirmed.`);
+    if (row.review === "incomplete") throw new RegistryError(409, `${row.id} is incomplete.`);
+    row.review = "confirmed";
+    row.operator = action;
+    row.actor = actor;
+    row.at = new Date().toISOString();
+    const diverged = REVIEW_STATE[action] !== row.policy.admission;
+    const text = diverged
+      ? `Operator ${action} diverges from policy ${row.policy.admission}. Dataset membership was not changed.`
+      : `Operator ${action} confirms policy ${row.policy.admission}. Dataset membership was not changed.`;
+    this.pushAudit(actor, text, "demonstration", row.id);
+    return this.object(env, "demonstration", row.id);
+  }
+
+  private collectedRow(row: CollectedDemonstration): ListRow {
+    return this.row(
+      "demonstration",
+      row.id,
+      {
+        id: row.id,
+        task: row.task,
+        review: row.review,
+        policy: row.policy?.admission ?? "not run",
+        train: row.policy?.train ?? "—",
+        validation: row.policy?.validation ?? "—",
+        production: row.policy?.production ?? "—",
+        novelty: "—",
+        fit: row.input ? n2(row.input.embodimentFit) : "—",
+        safety: row.input?.safetyRelevance ?? "—",
+      },
+      {
+        review: row.review === "confirmed" ? "muted" : "warn",
+        policy: row.policy ? toneForAdmission(row.policy.admission) : "warn",
+      },
+      [
+        field("Source", row.source, { mono: true }),
+        field("What", row.what),
+        field("Use", row.use),
+        field("Model", row.modelClass, { mono: true }),
+        field("Policy", row.policy?.admission ?? "not run", { tone: row.policy ? toneForAdmission(row.policy.admission) : "warn" }),
+        field("Missing", row.missing.join(", ") || "—", { mono: true }),
+      ],
+    );
+  }
+
+  private collectedWorkspace(row: CollectedDemonstration): Workspace {
+    const pending = row.review === "pending" && Boolean(row.policy);
+    return this.finish({
+      kind: "demonstration",
+      id: row.id,
+      title: row.id,
+      subtitle: row.what,
+      origin: row.origin,
+      source: row.source,
+      originNote: "",
+      summary: [
+        field("What", row.what),
+        field("Use", row.use),
+        field("Model", row.modelClass, { mono: true }),
+        field("Review", row.review, { tone: row.review === "confirmed" ? "ok" : "warn" }),
+        field("Policy", row.policy?.admission ?? "not run", { tone: row.policy ? toneForAdmission(row.policy.admission) : "warn" }),
+      ],
+      overview: [
+        panel("Collection", [
+          field("Source", row.source, { mono: true }),
+          field("Sample", row.sampleId, { mono: true }),
+          field("Captured", row.capturedAt, { mono: true }),
+          field("Missing", row.missing.join(", ") || "—"),
+        ]),
+      ],
+      evidence: [panel("Policy", row.policy ? row.policy.reasons.map((reason, index) => field(String(index + 1), reason)) : [field("Result", "not run")])],
+      actions: pending
+        ? [
+            { id: "admit", label: "Admit", group: "review" },
+            { id: "quarantine", label: "Quarantine", group: "review" },
+            { id: "reject", label: "Reject", group: "review" },
+          ]
+        : [],
+    });
   }
 
   private buildObject(kind: string, id: string): Workspace | null {
@@ -1273,7 +1432,7 @@ export class MemoryRegistry {
     });
     const activity = this.audit
       .filter((event) => event.subjectId === partial.id)
-      .map((event) => ({ at: event.at, actor: event.actor, action: event.action, session: event.session }));
+      .map((event) => ({ at: event.at, actor: event.actor, action: event.action, session: event.session, signature: event.signature }));
     return { ...partial, lineage, runs, safety, decisions, activity };
   }
 
@@ -1421,7 +1580,7 @@ export class MemoryRegistry {
 
   private pushAudit(actor: string, action: string, subjectKind: string, subjectId: string) {
     this.auditSeq += 1;
-    this.audit.push({
+    const event: AuditEvent = {
       id: `AUD-S-${this.auditSeq}`,
       at: new Date().toISOString(),
       actor,
@@ -1429,7 +1588,9 @@ export class MemoryRegistry {
       subjectKind,
       subjectId,
       session: true,
-    });
+    };
+    if (this.signer) event.signature = this.signer(event);
+    this.audit.push(event);
   }
 
   private assertEnv(env: string) {

@@ -45,7 +45,7 @@ export interface Workspace {
   runs: { kind: string; id: string; status: string }[];
   safety: { kind: string; id: string; summary: string }[];
   decisions: { id: string; gate: string; decision: string; state: string; tone?: Tone }[];
-  activity: { at: string; actor: string; action: string; session: boolean }[];
+  activity: { at: string; actor: string; action: string; session: boolean; signature?: string }[];
   actions: ActionSpec[];
 }
 

@@ -44,6 +44,7 @@ Own harness models will be trained per specialist. Until a model is trained, the
 - Go for the harness service and the OpenRouter client.
 - Make is the entry point: `make test`, `make build`.
 - Secrets are environment variables. They are not committed.
+- Production state is PostgreSQL (`DATABASE_URL`). A non-loopback bind requires `PADE_OPERATOR_TOKEN`. The audit line is signed with that token. A collected sample becomes a demonstration and runs `admission-0.1.0` only when the sample contains the contract.
 
 ## Control plane
 

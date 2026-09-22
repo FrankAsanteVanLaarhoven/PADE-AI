@@ -191,6 +191,22 @@ export function App() {
             </button>
             <ThemeLanguage />
             <Clock />
+            {meta?.auth === "required" ? (
+              <input
+                className="operator"
+                type="password"
+                aria-label="Operator"
+                placeholder="Operator"
+                defaultValue=""
+                onChange={(event) => {
+                  try {
+                    sessionStorage.setItem("pade-operator", event.target.value);
+                  } catch {
+                    /* private mode */
+                  }
+                }}
+              />
+            ) : null}
             <label className="scope">
               <select aria-label={t("environment")} value={env} onChange={(event) => setEnv(event.target.value)}>
                 {(meta?.environments ?? [
