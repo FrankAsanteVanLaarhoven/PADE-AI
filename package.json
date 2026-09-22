@@ -1,0 +1,21 @@
+{
+  "name": "pade",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @pade/api --filter @pade/control-plane dev",
+    "test": "pnpm --filter @pade/domain test && pnpm --filter @pade/registry test",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "gate": "node scripts/gate.mjs",
+    "qa": "node scripts/qa.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.55.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}
